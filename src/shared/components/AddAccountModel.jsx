@@ -160,7 +160,6 @@ export default AddAccountModel;
 const styles = StyleSheet.create({
   container: {
     height: "auto",
-    borderWidth: 1,
   },
   modal: {
     flex: 1,
