@@ -20,7 +20,16 @@ const AccountsScreen = ({ navigation }) => {
   const income = (
     <Icon name="pluscircleo" size={30} color={"#1edb09"} style={styles.icons} />
   );
-  const expense = <Icon name="minuscircleo" size={30} color={"#c21906"} />;
+  const expense = (
+    <Icon
+      name="minuscircleo"
+      size={30}
+      color={"#c21906"}
+      style={styles.icons}
+    />
+  );
+
+  const wallet = <Icon name="wallet" size={50} />;
 
   const fun = (data) => {
     if (data.length > 0) {
@@ -56,32 +65,34 @@ const AccountsScreen = ({ navigation }) => {
         setModalVisible={setModalVisible}
       />
 
-      <View style={styles.content}>
-        {/* {status == SLICE_STATUS.SUCCEEDED && accounts && (
+      <View>
+        {status == SLICE_STATUS.SUCCEEDED && accounts && (
           <FlatList
             data={accounts}
             keyExtractor={(item) => (item && item.id ? item.id.toString() : "")}
             renderItem={({ item }) => {
               return (
-                <Text key={item.id}>
-                  {item.accountName}: {item.balance}
-                </Text>
+                <View style={styles.content}>
+                  <View key={item.id} style={styles.titleView}>
+                    {item.types == "Income" ? income : expense}
+                    <Text style={globalTextStyles.headingText}>
+                      {item.accountName}
+                    </Text>
+                  </View>
+                  <View style={styles.charts}>
+                    <View style={styles.range}>
+                      <ProgressBar
+                        progress={item.balance}
+                        maxProgress={item.limits}
+                      />
+                    </View>
+                    {wallet}
+                  </View>
+                </View>
               );
             }}
           />
-        )} */}
-        <View style={styles.titleView}>
-          {income}
-          <Text style={globalTextStyles.headingText}>Bank1</Text>
-        </View>
-        <View style={styles.charts}>
-          <View style={styles.range}>
-            {/* <Progress.Bar progress={0.3} width={200} /> */}
-            <ProgressBar progress={30} maxProgress={100} />
-            <Text style={styles.text}>{30}</Text>
-          </View>
-          {expense}
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -94,8 +105,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    marginTop: 10,
     backgroundColor: "#fff",
+    marginTop: 10,
   },
   icons: {
     marginLeft: 25,
@@ -103,6 +114,7 @@ const styles = StyleSheet.create({
   },
   titleView: {
     flexDirection: "row",
+    marginTop: 10,
   },
   charts: {
     flexDirection: "row",
