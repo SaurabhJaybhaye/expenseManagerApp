@@ -1,12 +1,12 @@
+import React from "react";
 import {
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Image,
   View,
 } from "react-native";
-import React from "react";
 const { width } = Dimensions.get("window");
 const Header = (props) => {
   const { title, leftIcon, rightIcon, onClickLeftIcon, onClickRightIcon } =

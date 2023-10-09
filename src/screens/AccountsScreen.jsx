@@ -1,39 +1,40 @@
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
-import { HEADER_TITLE } from "../shared/Constants";
-import Header from "../shared/components/Header";
-import AddAccountModel from "../shared/components/AddAccountModel";
 import { useFocusEffect } from "@react-navigation/native";
+import React, { useState } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import Icon from "react-native-vector-icons/AntDesign";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../redux/slices/accountSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { HEADER_TITLE, SLICE_STATUS } from "../shared/Constants";
+import AddAccountModel from "../shared/components/AddAccountModel";
+import { globalTextStyles } from "../shared/components/GlobalStyles";
+import Header from "../shared/components/Header";
+import ProgressBar from "../shared/components/ProgressBar";
 
 const AccountsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const accountData = useSelector((state) => state.accounts);
-  console.log("accounts", accountData);
-  const [accountList, setAccountList] = useState([]);
+  const status = useSelector((state) => state.accounts.status);
+  const accounts = useSelector((state) => state.accounts.accounts);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const income = (
+    <Icon name="pluscircleo" size={30} color={"#1edb09"} style={styles.icons} />
+  );
+  const expense = (
+    <Icon
+      name="minuscircleo"
+      size={30}
+      color={"#c21906"}
+      style={styles.icons}
+    />
+  );
+
+  const wallet = <Icon name="wallet" size={50} />;
 
   useFocusEffect(
     React.useCallback(() => {
       dispatch(getAllAccounts());
     }, [modalVisible, dispatch])
   );
-
-  // useEffect(() => {
-  //   getAllAccounts()
-  //     .then((data) => {
-  //       console.log("get all data", data);
-  //     })
-  //     .catch((err) => {
-  //       console.log("get all data err", err);
-  //     });
-  //   const fetchData = async () => {
-  //     const data = await getAllAccounts();
-  //     console.log("data", data);
-  //   };
-  //   fetchData();
-  // }, [modalVisible]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,19 +56,33 @@ const AccountsScreen = ({ navigation }) => {
       />
 
       <View>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Account List</Text>
-        {/* <FlatList
-          data={accounts}
-          keyExtractor={(item) => (item && item.id ? item.id.toString() : "")}
-          renderItem={({ item }) => {
-            // if (!item) return null; // Skip rendering if item is undefined
-            return (
-              <Text key={item.id}>
-                {item.accountName}: {item.balance}
-              </Text>
-            );
-          }}
-        /> */}
+        {status == SLICE_STATUS.SUCCEEDED && accounts && (
+          <FlatList
+            data={accounts}
+            keyExtractor={(item) => (item && item.id ? item.id.toString() : "")}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.content}>
+                  <View key={item.id} style={styles.titleView}>
+                    {item.types == "Income" ? income : expense}
+                    <Text style={globalTextStyles.headingText}>
+                      {item.accountName}
+                    </Text>
+                  </View>
+                  <View style={styles.charts}>
+                    <View style={styles.range}>
+                      <ProgressBar
+                        progress={item.balance}
+                        maxProgress={item.limits}
+                      />
+                    </View>
+                    {wallet}
+                  </View>
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -78,6 +93,26 @@ export default AccountsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
     backgroundColor: "#fff",
+    marginTop: 10,
+  },
+  icons: {
+    marginLeft: 25,
+    marginRight: 10,
+  },
+  titleView: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  charts: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  range: {
+    width: "70%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
