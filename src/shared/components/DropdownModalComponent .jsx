@@ -23,7 +23,9 @@ const DropdownModalComponent = ({
       onPress={() => handleDropDown({ label: title, value: value, icon: icon })}
       style={styles.modalView}
     >
-      <View style={styles.image}>{icon}</View>
+      <View style={styles.image}>
+        <Icon name={icon} size={20} color={"#000"} />
+      </View>
       <View style={styles.options}>
         <Text style={globalTextStyles.commonText}>{title}</Text>
       </View>

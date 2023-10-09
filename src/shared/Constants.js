@@ -25,3 +25,7 @@ export const SLICE_STATUS = {
 };
 
 export const DB_NAME = "Daily_Expense_Manager.db";
+
+export const DROPDOWN_OPTIONS = (label, value, icon) => {
+  return { label: label, value: value, icon: icon };
+};
