@@ -68,7 +68,6 @@ export const getAllAccounts = createAsyncThunk(
             [],
             (_, results) => {
               data = results.rows._array;
-              // console.log("result", data);
               resolve(data);
             },
             (_, error) => {

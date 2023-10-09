@@ -20,6 +20,9 @@
     },
     "peacock.color": "#f9e64f",
     "cSpell.words": [
-        "AUTOINCREMENT"
+        "AUTOINCREMENT",
+        "Formik",
+        "minuscircleo",
+        "pluscircleo"
     ]
 }

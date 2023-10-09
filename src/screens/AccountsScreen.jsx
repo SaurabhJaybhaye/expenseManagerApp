@@ -1,15 +1,14 @@
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
-import { HEADER_TITLE, SLICE_STATUS } from "../shared/Constants";
-import Header from "../shared/components/Header";
-import AddAccountModel from "../shared/components/AddAccountModel";
 import { useFocusEffect } from "@react-navigation/native";
-import { getAllAccounts } from "../redux/slices/accountSlice";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllAccounts } from "../redux/slices/accountSlice";
+import { HEADER_TITLE, SLICE_STATUS } from "../shared/Constants";
+import AddAccountModel from "../shared/components/AddAccountModel";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
+import Header from "../shared/components/Header";
 import ProgressBar from "../shared/components/ProgressBar";
-// import * as Progress from "react-native-progress";
 
 const AccountsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -31,18 +30,9 @@ const AccountsScreen = ({ navigation }) => {
 
   const wallet = <Icon name="wallet" size={50} />;
 
-  const fun = (data) => {
-    if (data.length > 0) {
-      data.map((i) => console.log("data", i));
-    }
-  };
-
   useFocusEffect(
     React.useCallback(() => {
       dispatch(getAllAccounts());
-      if (accounts) {
-        fun(accounts);
-      }
     }, [modalVisible, dispatch])
   );
 
