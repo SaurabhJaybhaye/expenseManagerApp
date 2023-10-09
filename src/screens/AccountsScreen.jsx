@@ -56,7 +56,7 @@ const AccountsScreen = ({ navigation }) => {
       />
 
       <View>
-        {status == SLICE_STATUS.SUCCEEDED && accounts && (
+        {status == SLICE_STATUS.SUCCEEDED && accounts ? (
           <FlatList
             data={accounts}
             keyExtractor={(item) => (item && item.id ? item.id.toString() : "")}
@@ -82,6 +82,8 @@ const AccountsScreen = ({ navigation }) => {
               );
             }}
           />
+        ) : (
+          <Text>No Accounts Available Please add new Accounts</Text>
         )}
       </View>
     </SafeAreaView>
