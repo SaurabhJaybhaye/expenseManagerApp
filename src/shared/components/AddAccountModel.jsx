@@ -6,8 +6,8 @@ import SwitchToggle from "react-native-switch-toggle";
 import { useDispatch } from "react-redux";
 import { addAccount } from "../../redux/slices/accountSlice";
 import { ACCOUNT_TYPES, CURRENCY_TYPES } from "../Constants";
-import { globalTextStyles } from "./GlobalStyles";
 import { addAccountSchema } from "../schema/addAccountSchema";
+import { globalTextStyles } from "./GlobalStyles";
 
 const AddAccountModel = ({ modalVisible, setModalVisible }) => {
   const dispatch = useDispatch();
