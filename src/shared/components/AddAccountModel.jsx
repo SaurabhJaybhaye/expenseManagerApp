@@ -1,20 +1,12 @@
-import {
-  View,
-  Modal,
-  StyleSheet,
-  Text,
-  Alert,
-  TextInput,
-  Button,
-} from "react-native";
-import React from "react";
-import { globalTextStyles } from "./GlobalStyles";
 import { Formik } from "formik";
+import React from "react";
+import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import SelectDropdown from "react-native-select-dropdown";
 import SwitchToggle from "react-native-switch-toggle";
-import { ACCOUNT_TYPES, CURRENCY_TYPES } from "../Constants";
 import { useDispatch } from "react-redux";
 import { addAccount } from "../../redux/slices/accountSlice";
+import { ACCOUNT_TYPES, CURRENCY_TYPES } from "../Constants";
+import { globalTextStyles } from "./GlobalStyles";
 
 const AddAccountModel = ({ modalVisible, setModalVisible }) => {
   const dispatch = useDispatch();
@@ -59,10 +51,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        backdropColor="grey"
-        backdropOpacity={0.5}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
         style={{ justifyContent: "center" }}
@@ -160,10 +149,25 @@ export default AddAccountModel;
 const styles = StyleSheet.create({
   container: {
     height: "auto",
-  },
-  modal: {
-    flex: 1,
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  modal: {
+    margin: 20,
+    alignSelf: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
