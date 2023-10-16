@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  View,
-  Modal,
   FlatList,
+  Image,
+  Modal,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  Image,
-  StyleSheet,
+  View,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { globalTextStyles } from "./GlobalStyles";
@@ -15,7 +15,6 @@ const DropdownModalComponent = ({
   selectedAccount,
   modalVisible,
   setModalVisible,
-  dropDownIcon,
   data,
   handleDropDown,
 }) => {

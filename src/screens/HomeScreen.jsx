@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { getAllAccounts } from "../redux/slices/accountSlice";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  StyleSheet,
-  Text,
+  Image,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Image,
+  View,
 } from "react-native";
-import Header from "../shared/components/Header";
+import Icon from "react-native-vector-icons/AntDesign";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllAccounts } from "../redux/slices/accountSlice";
 import {
   DROPDOWN_OPTIONS,
   HEADER_TITLE,
   PATHS,
   SLICE_STATUS,
 } from "../shared/Constants";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/AntDesign";
 import DropdownModalComponent from "../shared/components/DropdownModalComponent "; // Import the component
-import ActionButtons from "./ActionButtons";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
-import { useDispatch, useSelector } from "react-redux";
+import Header from "../shared/components/Header";
+import ActionButtons from "./ActionButtons";
 
 import MyPieChart from "../shared/components/MyPieChart";
 const HomeScreen = () => {
@@ -65,9 +64,6 @@ const HomeScreen = () => {
       }}
     ></Icon.Button>
   );
-  const bank2 = <Icon name="home" size={20} color={"#000"} />;
-  const cash = <Icon name="wallet" size={20} color={"#000"} />;
-  const bank1 = <Icon name="pay-circle-o1" size={20} color={"#000"} />;
 
   const data =
     status === SLICE_STATUS.SUCCEEDED &&
@@ -119,7 +115,6 @@ const HomeScreen = () => {
           selectedAccount={selectedAccount}
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          dropDownIcon={dropDownIcon}
           data={data}
           handleDropDown={handleDropDown}
         />
