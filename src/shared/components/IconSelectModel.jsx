@@ -12,7 +12,6 @@ import {
 
 const icons = require.context("../assets/dbIcons", false, /\.(png|jpe?g|svg)$/);
 const iconList = icons.keys().map(icons);
-
 const IconSelectModel = ({
   iconModalVisible,
   setIconModalVisible,
@@ -34,7 +33,7 @@ const IconSelectModel = ({
           <View style={styles.iconContainer}>
             {iconList.map((icon, index) => (
               <TouchableOpacity
-                key={index}
+                key={icon}
                 onPress={() => {
                   setSelectedIcon(icon);
                   setIconModalVisible(false);

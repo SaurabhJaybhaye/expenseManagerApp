@@ -5,6 +5,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  Image,
   StyleSheet,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
@@ -24,7 +25,7 @@ const DropdownModalComponent = ({
       style={styles.modalView}
     >
       <View style={styles.image}>
-        <Icon name={icon} size={20} color={"#000"} />
+        <Image source={Number(icon)} size={20} style={styles.icons} />
       </View>
       <View style={styles.options}>
         <Text style={globalTextStyles.commonText}>{title}</Text>
@@ -90,5 +91,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-end",
     marginRight: 15,
+  },
+  icons: {
+    height: 30,
+    width: 30,
   },
 });

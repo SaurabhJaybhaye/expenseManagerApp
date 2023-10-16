@@ -1,6 +1,13 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+} from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../redux/slices/accountSlice";
@@ -76,7 +83,8 @@ const AccountsScreen = ({ navigation }) => {
                         maxProgress={item.limits}
                       />
                     </View>
-                    {wallet}
+                    {/* {wallet} */}
+                    <Image source={Number(item.icon)} style={styles.icons} />
                   </View>
                 </View>
               );
@@ -103,6 +111,8 @@ const styles = StyleSheet.create({
   icons: {
     marginLeft: 25,
     marginRight: 10,
+    height: 30,
+    width: 30,
   },
   titleView: {
     flexDirection: "row",

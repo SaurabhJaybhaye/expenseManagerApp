@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { getAllAccounts } from "../redux/slices/accountSlice";
 import {
@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import Header from "../shared/components/Header";
 import {
@@ -30,13 +31,22 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const status = useSelector((state) => state.accounts.status);
   const accounts = useSelector((state) => state.accounts.accounts);
-  console.log("status", status);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState({
     label: "",
     value: "",
-    icon: bank1,
+    icon: "",
   });
+
+  useEffect(() => {
+    if (status === SLICE_STATUS.SUCCEEDED && accounts.length > 0) {
+      setSelectedAccount({
+        label: accounts[0].accountName,
+        value: accounts[0].accountName,
+        icon: accounts[0].icon,
+      });
+    }
+  }, [status, accounts]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -85,7 +95,7 @@ const HomeScreen = () => {
 
         <View style={[styles.dropdown, styles.shadowBoarder]}>
           <View style={[styles.dropdownText, styles.dropdownImage]}>
-            <Icon name={selectedAccount.icon} size={20} color={"#000"} />
+            <Image source={Number(selectedAccount.icon)} style={styles.icons} />
           </View>
           <View style={[styles.dropdownText, styles.title]}>
             <Text style={globalTextStyles.commonText}>
@@ -339,5 +349,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "flex-end",
     marginRight: 10,
+  },
+  icons: {
+    height: 30,
+    width: 30,
   },
 });
