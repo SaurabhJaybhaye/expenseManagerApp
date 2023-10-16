@@ -6,6 +6,7 @@ export const PATHS = {
   FORMS: "Forms",
   REPORT_BY_YEAR: "Report by year",
   REPORT_BY_CATEGORY: "Report by category",
+  SETTINGS: "Settings",
 };
 
 export const HEADER_TITLE = {

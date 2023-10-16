@@ -11,6 +11,7 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import FontAwesomeIcon5 from "react-native-vector-icons/FontAwesome5";
 import Feather from "react-native-vector-icons/Feather";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -65,6 +66,15 @@ const DrawerNavigator = () => {
         options={{
           drawerIcon: ({ color }) => (
             <FontAwesomeIcon name="pie-chart" size={20} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name={PATHS.SETTINGS}
+        component={SettingsScreen}
+        options={{
+          drawerIcon: ({ color }) => (
+            <Feather name="settings" size={20} color={color} />
           ),
         }}
       />
