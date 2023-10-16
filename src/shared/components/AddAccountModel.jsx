@@ -28,7 +28,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
     initialValues: {
       accountName: "",
       description: "",
-      icon: "",
+      icon: 20,
       type: "",
       currency: "",
       balance: "",
@@ -72,14 +72,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
               style={styles.imageView}
               onPress={() => setIconModalVisible(true)}
             >
-              {formik.values.icon ? (
-                <Image
-                  source={formik.values.icon}
-                  style={styles.selectedIcon}
-                />
-              ) : (
-                <Text>Select Icon</Text>
-              )}
+              <Image source={formik.values.icon} style={styles.selectedIcon} />
             </TouchableOpacity>
             <TextInput
               style={styles.input}
