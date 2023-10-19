@@ -16,6 +16,7 @@ import AddAccountModel from "../shared/components/AddAccountModel";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
 import Header from "../shared/components/Header";
 import ProgressBar from "../shared/components/ProgressBar";
+import ProgressBarNPM from "../shared/components/ProgressBarNPM";
 
 const AccountsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -24,18 +25,16 @@ const AccountsScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const income = (
-    <Icon name="pluscircleo" size={30} color={"#1edb09"} style={styles.icons} />
+    <Icon name="pluscircleo" size={25} color={"#1edb09"} style={styles.icons} />
   );
   const expense = (
     <Icon
       name="minuscircleo"
-      size={30}
+      size={25}
       color={"#c21906"}
       style={styles.icons}
     />
   );
-
-  const wallet = <Icon name="wallet" size={50} />;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -78,7 +77,7 @@ const AccountsScreen = ({ navigation }) => {
                   </View>
                   <View style={styles.charts}>
                     <View style={styles.range}>
-                      <ProgressBar
+                      <ProgressBarNPM
                         progress={item.balance}
                         maxProgress={item.limits}
                       />
@@ -110,9 +109,10 @@ const styles = StyleSheet.create({
   },
   icons: {
     marginLeft: 25,
-    marginRight: 10,
+    marginRight: 5,
     height: 30,
     width: 30,
+    marginTop: 3,
   },
   titleView: {
     flexDirection: "row",

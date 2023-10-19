@@ -2,12 +2,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as SQLite from "expo-sqlite";
 import { SLICE_STATUS, DB_NAME } from "../../shared/Constants";
+import { startLoading, stopLoading } from "./loaderSlice";
 
 // Create an async thunk for creating accounts
 
 export const addAccount = createAsyncThunk(
   "accounts/addAccount",
   async (accountData, thunkAPI) => {
+    thunkAPI.dispatch(startLoading());
     const db = SQLite.openDatabase(DB_NAME);
     try {
       const {
@@ -42,14 +44,17 @@ export const addAccount = createAsyncThunk(
             } else {
               console.log("Failed to insert record");
             }
+            thunkAPI.dispatch(stopLoading());
             return accountData;
           },
           (_, error) => {
             console.log("ERROR", error);
+            thunkAPI.dispatch(stopLoading());
           }
         );
       });
     } catch (error) {
+      thunkAPI.dispatch(stopLoading());
       thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -58,6 +63,7 @@ export const addAccount = createAsyncThunk(
 export const getAllAccounts = createAsyncThunk(
   "accounts/getAllAccounts",
   async (_, thunkAPI) => {
+    thunkAPI.dispatch(startLoading());
     try {
       const db = SQLite.openDatabase(DB_NAME);
       let data;
@@ -77,9 +83,11 @@ export const getAllAccounts = createAsyncThunk(
           );
         });
       });
+      thunkAPI.dispatch(stopLoading());
       return data;
     } catch (error) {
       console.log(error.message);
+      thunkAPI.dispatch(stopLoading());
       thunkAPI.rejectWithValue(error);
     }
   }
