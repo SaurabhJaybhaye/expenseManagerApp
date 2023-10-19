@@ -14,7 +14,7 @@ const Loader = () => {
     >
       <View style={styles.container}>
         <View style={styles.innerContainer}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color="#05b511" />
         </View>
       </View>
     </Modal>
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   innerContainer: {
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
