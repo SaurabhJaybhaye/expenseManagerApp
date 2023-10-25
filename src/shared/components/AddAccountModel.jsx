@@ -144,7 +144,11 @@ const AddAccountModel = ({
         style={{ justifyContent: "center" }}
       >
         <View style={styles.modal}>
-          <Text style={globalTextStyles.headingText}>New Account</Text>
+          {edit ? (
+            <Text style={globalTextStyles.headingText}>Update Account</Text>
+          ) : (
+            <Text style={globalTextStyles.headingText}>New Account</Text>
+          )}
           <View style={styles.from}>
             <TouchableOpacity
               style={styles.imageView}
