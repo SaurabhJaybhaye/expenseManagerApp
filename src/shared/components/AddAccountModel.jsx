@@ -41,7 +41,6 @@ const AddAccountModel = ({
   const postData = async (values) => {
     const response = await dispatch(
       addAccount({
-        id: selectedAccount.id,
         accountName: values.accountName,
         description: values.description,
         icon: values.icon,
@@ -53,6 +52,7 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
+    console.log(values);
     handleClose();
   };
 
@@ -76,16 +76,20 @@ const AddAccountModel = ({
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log(selectedAccount);
       if (edit && selectedAccount.id) {
         formik.setFieldValue("accountName", selectedAccount.accountName);
         formik.setFieldValue("description", selectedAccount.description);
         formik.setFieldValue("icon", Number(selectedAccount.icon));
         formik.setFieldValue("balance", String(selectedAccount.balance));
         formik.setFieldValue("limit", String(selectedAccount.limits));
-        formik.setFieldValue("showAccount", selectedAccount.showAccount);
+        formik.setFieldValue(
+          "showAccount",
+          selectedAccount.showAccount == 0 ? false : true
+        );
         formik.setFieldValue(
           "positiveBalanceOpening",
-          selectedAccount.positiveOpening
+          selectedAccount.positiveOpening == 0 ? false : true
         );
         if (
           selectedAccount.types &&
