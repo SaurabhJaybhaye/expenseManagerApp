@@ -52,7 +52,6 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
-    console.log(values);
     handleClose();
   };
 
@@ -76,7 +75,6 @@ const AddAccountModel = ({
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log(selectedAccount);
       if (edit && selectedAccount.id) {
         formik.setFieldValue("accountName", selectedAccount.accountName);
         formik.setFieldValue("description", selectedAccount.description);
