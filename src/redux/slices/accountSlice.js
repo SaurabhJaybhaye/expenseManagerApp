@@ -93,6 +93,64 @@ export const getAllAccounts = createAsyncThunk(
   }
 );
 
+export const updateAccount = createAsyncThunk(
+  "accounts/updateAccount",
+  async (accountData, thunkAPI) => {
+    thunkAPI.dispatch(startLoading());
+    const db = SQLite.openDatabase(DB_NAME);
+    console.log("accountData", accountData);
+    try {
+      const {
+        id,
+        accountName,
+        description,
+        icon,
+        type,
+        currency,
+        balance,
+        limit,
+        positiveOpening,
+        showAccount,
+      } = accountData;
+      db.transaction((tx) => {
+        tx.executeSql(
+          `UPDATE accounts 
+           SET accountName = ?, description = ?, icon = ?, currency = ?, balance = ?, limits = ?, types = ?, positiveOpening = ?, showAccount = ?
+           WHERE id = ?`,
+          [
+            accountName,
+            description,
+            icon,
+            currency,
+            parseFloat(balance),
+            parseFloat(limit),
+            type,
+            positiveOpening,
+            showAccount,
+            id,
+          ],
+          (_, results) => {
+            if (results.rowsAffected > 0) {
+              console.log("Record updated successfully");
+            } else {
+              console.log("Failed to update record");
+            }
+            thunkAPI.dispatch(stopLoading());
+            return accountData;
+          },
+          (_, error) => {
+            console.log("ERROR", error);
+            thunkAPI.dispatch(stopLoading());
+          }
+        );
+      });
+    } catch (error) {
+      thunkAPI.dispatch(stopLoading());
+      thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const deleteAccount = createAsyncThunk(
   "accounts/deleteAccount",
   async (accountId, thunkAPI) => {
@@ -161,6 +219,16 @@ const accountSlice = createSlice({
         state.status = SLICE_STATUS.SUCCEEDED;
       })
       .addCase(deleteAccount.rejected, (state, action) => {
+        state.status = SLICE_STATUS.FAILED;
+        state.error = action.error.message;
+      })
+      .addCase(updateAccount.pending, (state) => {
+        state.status = SLICE_STATUS.LOADING;
+      })
+      .addCase(updateAccount.fulfilled, (state) => {
+        state.status = SLICE_STATUS.SUCCEEDED;
+      })
+      .addCase(updateAccount.rejected, (state, action) => {
         state.status = SLICE_STATUS.FAILED;
         state.error = action.error.message;
       });

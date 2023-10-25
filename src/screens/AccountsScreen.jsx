@@ -61,7 +61,7 @@ const AccountsScreen = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       if (edit) {
-        setModalVisible(true);
+        setModalVisible(!modalVisible);
       }
     }, [edit])
   );

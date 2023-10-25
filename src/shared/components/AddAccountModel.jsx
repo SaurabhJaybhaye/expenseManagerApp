@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Modal,
@@ -9,10 +9,11 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import SelectDropdown from "react-native-select-dropdown";
 import SwitchToggle from "react-native-switch-toggle";
 import { useDispatch } from "react-redux";
-import { addAccount } from "../../redux/slices/accountSlice";
+import { addAccount, updateAccount } from "../../redux/slices/accountSlice";
 import { ACCOUNT_TYPES, CURRENCY_TYPES } from "../Constants";
 import { addAccountSchema } from "../schema/addAccountSchema";
 import { globalTextStyles } from "./GlobalStyles";
@@ -40,6 +41,7 @@ const AddAccountModel = ({
   const postData = async (values) => {
     const response = await dispatch(
       addAccount({
+        id: selectedAccount.id,
         accountName: values.accountName,
         description: values.description,
         icon: values.icon,
@@ -54,33 +56,54 @@ const AddAccountModel = ({
     handleClose();
   };
 
+  const putData = async (values) => {
+    const response = await dispatch(
+      updateAccount({
+        id: selectedAccount.id,
+        accountName: values.accountName,
+        description: values.description,
+        icon: values.icon,
+        type: values.type,
+        currency: values.currency,
+        balance: values.balance,
+        limit: values.limit,
+        positiveOpening: values.positiveBalanceOpening === true ? 1 : 0,
+        showAccount: values.showAccount === true ? 1 : 0,
+      })
+    );
+    handleClose();
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (edit && selectedAccount.id) {
+        formik.setFieldValue("accountName", selectedAccount.accountName);
+        formik.setFieldValue("description", selectedAccount.description);
+        formik.setFieldValue("icon", Number(selectedAccount.icon));
+        formik.setFieldValue("balance", String(selectedAccount.balance));
+        formik.setFieldValue("limit", String(selectedAccount.limits));
+        formik.setFieldValue("showAccount", selectedAccount.showAccount);
+        formik.setFieldValue(
+          "positiveBalanceOpening",
+          selectedAccount.positiveOpening
+        );
+        if (
+          selectedAccount.types &&
+          ACCOUNT_TYPES.includes(selectedAccount.types)
+        ) {
+          formik.setFieldValue("type", selectedAccount.types);
+        }
+        if (
+          selectedAccount.currency &&
+          CURRENCY_TYPES.includes(selectedAccount.currency)
+        ) {
+          formik.setFieldValue("currency", selectedAccount.currency);
+        }
+      }
+    }, [modalVisible])
+  );
+
   // Inside the `useEffect` block
-  useEffect(() => {
-    if (edit && selectedAccount.id) {
-      formik.setFieldValue("accountName", selectedAccount.accountName);
-      formik.setFieldValue("description", selectedAccount.description);
-      formik.setFieldValue("icon", Number(selectedAccount.icon));
-      formik.setFieldValue("balance", String(selectedAccount.balance));
-      formik.setFieldValue("limit", String(selectedAccount.limits));
-      formik.setFieldValue("showAccount", selectedAccount.showAccount);
-      formik.setFieldValue(
-        "positiveBalanceOpening",
-        selectedAccount.positiveOpening
-      );
-      if (
-        selectedAccount.type &&
-        ACCOUNT_TYPES.includes(selectedAccount.types)
-      ) {
-        formik.setFieldValue("type", selectedAccount.types);
-      }
-      if (
-        selectedAccount.currency &&
-        CURRENCY_TYPES.includes(selectedAccount.currency)
-      ) {
-        formik.setFieldValue("currency", selectedAccount.currency);
-      }
-    }
-  }, [modalVisible]);
 
   const formik = useFormik({
     validationSchema: addAccountSchema,
@@ -96,7 +119,11 @@ const AddAccountModel = ({
       positiveBalanceOpening: true,
     },
     onSubmit: (values) => {
-      postData(values);
+      if (edit) {
+        putData(values);
+      } else {
+        postData(values);
+      }
       formik.resetForm();
     },
   });

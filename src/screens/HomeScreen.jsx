@@ -38,7 +38,7 @@ const HomeScreen = () => {
   });
 
   useEffect(() => {
-    if (status === SLICE_STATUS.SUCCEEDED && accounts.length > 0) {
+    if (status === SLICE_STATUS.SUCCEEDED && accounts?.length > 0) {
       setSelectedAccount({
         label: accounts[0].accountName,
         value: accounts[0].accountName,
