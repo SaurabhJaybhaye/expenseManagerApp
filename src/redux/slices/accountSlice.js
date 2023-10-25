@@ -41,21 +41,53 @@ export const addAccount = createAsyncThunk(
           (_, results) => {
             if (results.rowsAffected > 0) {
               console.log("Record inserted successfully");
+              thunkAPI.dispatch(stopLoading());
+              thunkAPI.dispatch({
+                type: "accounts/addAccountSuccess",
+                payload: {
+                  success: true,
+                  message: "Record inserted successfully",
+                  statuscode: 200,
+                },
+              });
             } else {
               console.log("Failed to insert record");
+              thunkAPI.dispatch(stopLoading());
+              thunkAPI.dispatch({
+                type: "accounts/addAccountFailure",
+                payload: {
+                  success: false,
+                  errorMessage: "Failed to insert record",
+                  statuscode: 500,
+                },
+              });
             }
-            thunkAPI.dispatch(stopLoading());
-            return accountData;
           },
           (_, error) => {
             console.log("ERROR", error);
             thunkAPI.dispatch(stopLoading());
+            thunkAPI.dispatch({
+              type: "accounts/addAccountFailure",
+              payload: {
+                success: false,
+                errorMessage: error,
+                statuscode: 500,
+              },
+            });
           }
         );
       });
     } catch (error) {
       thunkAPI.dispatch(stopLoading());
-      thunkAPI.rejectWithValue(error.message);
+      thunkAPI.dispatch({
+        type: "accounts/addAccountFailure",
+        payload: {
+          success: false,
+          errorMessage: error.message,
+          statuscode: 500,
+        },
+      });
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );

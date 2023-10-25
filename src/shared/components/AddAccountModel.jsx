@@ -52,6 +52,7 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
+    console.log("Add response", response);
     handleClose();
   };
 
@@ -70,6 +71,8 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
+    console.log("put response", response);
+
     handleClose();
   };
 
