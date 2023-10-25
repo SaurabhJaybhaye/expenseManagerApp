@@ -93,6 +93,37 @@ export const getAllAccounts = createAsyncThunk(
   }
 );
 
+export const deleteAccount = createAsyncThunk(
+  "accounts/deleteAccount",
+  async (accountId, thunkAPI) => {
+    thunkAPI.dispatch(startLoading());
+    const db = SQLite.openDatabase(DB_NAME);
+    try {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `DELETE FROM accounts WHERE id = ?`,
+          [accountId],
+          (_, results) => {
+            if (results.rowsAffected > 0) {
+              console.log("Record deleted successfully");
+            } else {
+              console.log("Failed to delete record");
+            }
+            thunkAPI.dispatch(stopLoading());
+          },
+          (_, error) => {
+            console.log("ERROR", error);
+            thunkAPI.dispatch(stopLoading());
+          }
+        );
+      });
+    } catch (error) {
+      thunkAPI.dispatch(stopLoading());
+      thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 const accountSlice = createSlice({
   name: "accounts",
   initialState: {
@@ -120,6 +151,16 @@ const accountSlice = createSlice({
         state.accounts = action.payload;
       })
       .addCase(getAllAccounts.rejected, (state, action) => {
+        state.status = SLICE_STATUS.FAILED;
+        state.error = action.error.message;
+      })
+      .addCase(deleteAccount.pending, (state) => {
+        state.status = SLICE_STATUS.LOADING;
+      })
+      .addCase(deleteAccount.fulfilled, (state) => {
+        state.status = SLICE_STATUS.SUCCEEDED;
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
         state.status = SLICE_STATUS.FAILED;
         state.error = action.error.message;
       });

@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   SafeAreaView,
@@ -7,22 +7,27 @@ import {
   Text,
   View,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllAccounts } from "../redux/slices/accountSlice";
+import { getAllAccounts, deleteAccount } from "../redux/slices/accountSlice";
 import { HEADER_TITLE, SLICE_STATUS } from "../shared/Constants";
 import AddAccountModel from "../shared/components/AddAccountModel";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
 import Header from "../shared/components/Header";
-import ProgressBar from "../shared/components/ProgressBar";
 import ProgressBarNPM from "../shared/components/ProgressBarNPM";
+import AccountMenuOptions from "../components/AccountMenuOptions";
 
 const AccountsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.accounts.status);
   const accounts = useSelector((state) => state.accounts.accounts);
   const [modalVisible, setModalVisible] = useState(false);
+  const [menuVissible, setMenuVissible] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState({});
 
   const income = (
     <Icon name="pluscircleo" size={25} color={"#1edb09"} style={styles.icons} />
@@ -42,6 +47,25 @@ const AccountsScreen = ({ navigation }) => {
     }, [modalVisible, dispatch])
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isDelete) {
+        dispatch(deleteAccount(selectedAccount.id));
+        setIsDelete(false);
+        setSelectedAccount({});
+        dispatch(getAllAccounts());
+      }
+    }, [isDelete])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (edit) {
+        setModalVisible(true);
+      }
+    }, [edit])
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <Header
@@ -59,6 +83,17 @@ const AccountsScreen = ({ navigation }) => {
       <AddAccountModel
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
+        selectedAccount={selectedAccount}
+        setSelectedAccount={setSelectedAccount}
+        edit={edit}
+        setEdit={setEdit}
+      />
+
+      <AccountMenuOptions
+        isVisible={menuVissible}
+        setVisible={setMenuVissible}
+        setDelete={setIsDelete}
+        setEdit={setEdit}
       />
 
       <View>
@@ -68,7 +103,12 @@ const AccountsScreen = ({ navigation }) => {
             keyExtractor={(item) => (item && item.id ? item.id.toString() : "")}
             renderItem={({ item }) => {
               return (
-                <View style={styles.content}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedAccount(item), setMenuVissible(true);
+                  }}
+                  style={styles.content}
+                >
                   <View key={item.id} style={styles.titleView}>
                     {item.types == "Income" ? income : expense}
                     <Text style={globalTextStyles.headingText}>
@@ -82,10 +122,9 @@ const AccountsScreen = ({ navigation }) => {
                         maxProgress={item.limits}
                       />
                     </View>
-                    {/* {wallet} */}
                     <Image source={Number(item.icon)} style={styles.icons} />
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             }}
           />

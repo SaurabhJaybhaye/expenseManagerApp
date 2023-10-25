@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Modal,
@@ -19,9 +19,68 @@ import { globalTextStyles } from "./GlobalStyles";
 import IconSelectModel from "./IconSelectModel";
 import { useFormik } from "formik";
 
-const AddAccountModel = ({ modalVisible, setModalVisible }) => {
+const AddAccountModel = ({
+  modalVisible,
+  setModalVisible,
+  selectedAccount,
+  setSelectedAccount,
+  edit,
+  setEdit,
+}) => {
   const dispatch = useDispatch();
   const [iconModalVisible, setIconModalVisible] = useState(false);
+
+  const handleClose = () => {
+    setSelectedAccount({});
+    setEdit(false);
+    formik.resetForm();
+    setModalVisible(false);
+  };
+
+  const postData = async (values) => {
+    const response = await dispatch(
+      addAccount({
+        accountName: values.accountName,
+        description: values.description,
+        icon: values.icon,
+        type: values.type,
+        currency: values.currency,
+        balance: values.balance,
+        limit: values.limit,
+        positiveOpening: values.positiveBalanceOpening === true ? 1 : 0,
+        showAccount: values.showAccount === true ? 1 : 0,
+      })
+    );
+    handleClose();
+  };
+
+  // Inside the `useEffect` block
+  useEffect(() => {
+    if (edit && selectedAccount.id) {
+      formik.setFieldValue("accountName", selectedAccount.accountName);
+      formik.setFieldValue("description", selectedAccount.description);
+      formik.setFieldValue("icon", Number(selectedAccount.icon));
+      formik.setFieldValue("balance", String(selectedAccount.balance));
+      formik.setFieldValue("limit", String(selectedAccount.limits));
+      formik.setFieldValue("showAccount", selectedAccount.showAccount);
+      formik.setFieldValue(
+        "positiveBalanceOpening",
+        selectedAccount.positiveOpening
+      );
+      if (
+        selectedAccount.type &&
+        ACCOUNT_TYPES.includes(selectedAccount.types)
+      ) {
+        formik.setFieldValue("type", selectedAccount.types);
+      }
+      if (
+        selectedAccount.currency &&
+        CURRENCY_TYPES.includes(selectedAccount.currency)
+      ) {
+        formik.setFieldValue("currency", selectedAccount.currency);
+      }
+    }
+  }, [modalVisible]);
 
   const formik = useFormik({
     validationSchema: addAccountSchema,
@@ -36,21 +95,9 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
       showAccount: true,
       positiveBalanceOpening: true,
     },
-    onSubmit: async (values) => {
-      const response = await dispatch(
-        addAccount({
-          accountName: values.accountName,
-          description: values.description,
-          icon: values.icon,
-          type: values.type,
-          currency: values.currency,
-          balance: values.balance,
-          limit: values.limit,
-          positiveOpening: values.positiveBalanceOpening === true ? 1 : 0,
-          showAccount: values.showAccount === true ? 1 : 0,
-        })
-      );
-      setModalVisible(false);
+    onSubmit: (values) => {
+      postData(values);
+      formik.resetForm();
     },
   });
 
@@ -61,7 +108,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          setModalVisible(!modalVisible);
+          handleClose();
         }}
         style={{ justifyContent: "center" }}
       >
@@ -99,6 +146,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
               style={styles.select}
               data={ACCOUNT_TYPES}
               name="type"
+              defaultValue={formik.values.type}
               onSelect={(selectedItem) =>
                 formik.handleChange("type")(selectedItem)
               }
@@ -140,6 +188,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
                 formik.handleChange("currency")(selectedItem)
               }
               name="currency"
+              defaultValue={formik.values.currency}
               buttonTextAfterSelection={(selectedItem, index) => {
                 return selectedItem;
               }}
@@ -228,7 +277,7 @@ const AddAccountModel = ({ modalVisible, setModalVisible }) => {
                 title="Cancel"
                 color="#ed0909"
                 onPress={() => {
-                  setModalVisible(!modalVisible);
+                  handleClose();
                 }}
               />
             </View>
