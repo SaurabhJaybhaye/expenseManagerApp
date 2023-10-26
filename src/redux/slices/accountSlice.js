@@ -9,9 +9,9 @@ import { startLoading, stopLoading } from "./loaderSlice";
 export const addAccount = createAsyncThunk(
   "accounts/addAccount",
   async (accountData, thunkAPI) => {
-    thunkAPI.dispatch(startLoading());
-    const db = SQLite.openDatabase(DB_NAME);
     try {
+      thunkAPI.dispatch(startLoading());
+      const db = SQLite.openDatabase(DB_NAME);
       const {
         accountName,
         description,
@@ -23,71 +23,62 @@ export const addAccount = createAsyncThunk(
         positiveOpening,
         showAccount,
       } = accountData;
-      db.transaction((tx) => {
-        tx.executeSql(
-          `INSERT INTO accounts (accountName, description, icon, currency, balance, limits, types,positiveOpening, showAccount)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            accountName,
-            description,
-            icon,
-            currency,
-            parseFloat(balance),
-            parseFloat(limit),
-            type,
-            positiveOpening,
-            showAccount,
-          ],
-          (_, results) => {
-            if (results.rowsAffected > 0) {
-              console.log("Record inserted successfully");
-              thunkAPI.dispatch(stopLoading());
-              thunkAPI.dispatch({
-                type: "accounts/addAccountSuccess",
-                payload: {
+
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `INSERT INTO accounts (accountName, description, icon, currency, balance, limits, types,positiveOpening, showAccount)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              accountName,
+              description,
+              icon,
+              currency,
+              parseFloat(balance),
+              parseFloat(limit),
+              type,
+              positiveOpening,
+              showAccount,
+            ],
+            (_, results) => {
+              if (results.rowsAffected > 0) {
+                const resp = {
                   success: true,
                   message: "Record inserted successfully",
                   statuscode: 200,
-                },
-              });
-            } else {
-              console.log("Failed to insert record");
-              thunkAPI.dispatch(stopLoading());
-              thunkAPI.dispatch({
-                type: "accounts/addAccountFailure",
-                payload: {
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              } else {
+                const resp = {
                   success: false,
                   errorMessage: "Failed to insert record",
                   statuscode: 500,
-                },
-              });
-            }
-          },
-          (_, error) => {
-            console.log("ERROR", error);
-            thunkAPI.dispatch(stopLoading());
-            thunkAPI.dispatch({
-              type: "accounts/addAccountFailure",
-              payload: {
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              }
+            },
+            (_, error) => {
+              const resp = {
                 success: false,
                 errorMessage: error,
                 statuscode: 500,
-              },
-            });
-          }
-        );
+              };
+              thunkAPI.dispatch(stopLoading());
+              reject(resp);
+            }
+          );
+        });
       });
     } catch (error) {
+      const resp = {
+        success: false,
+        errorMessage: error.message,
+        statuscode: 500,
+      };
       thunkAPI.dispatch(stopLoading());
-      thunkAPI.dispatch({
-        type: "accounts/addAccountFailure",
-        payload: {
-          success: false,
-          errorMessage: error.message,
-          statuscode: 500,
-        },
-      });
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(resp);
     }
   }
 );
@@ -109,7 +100,6 @@ export const getAllAccounts = createAsyncThunk(
               resolve(data);
             },
             (_, error) => {
-              console.log("getError", error);
               reject(error);
             }
           );
@@ -118,7 +108,6 @@ export const getAllAccounts = createAsyncThunk(
       thunkAPI.dispatch(stopLoading());
       return data;
     } catch (error) {
-      console.log(error.message);
       thunkAPI.dispatch(stopLoading());
       thunkAPI.rejectWithValue(error);
     }
@@ -130,8 +119,8 @@ export const updateAccount = createAsyncThunk(
   async (accountData, thunkAPI) => {
     thunkAPI.dispatch(startLoading());
     const db = SQLite.openDatabase(DB_NAME);
-    console.log("accountData", accountData);
     try {
+      thunkAPI.dispatch(startLoading());
       const {
         id,
         accountName,
@@ -163,22 +152,44 @@ export const updateAccount = createAsyncThunk(
           ],
           (_, results) => {
             if (results.rowsAffected > 0) {
-              console.log("Record updated successfully");
+              const resp = {
+                success: true,
+                message: "Record updated successfully",
+                statuscode: 200,
+              };
+              thunkAPI.dispatch(stopLoading());
+              resolve(resp);
             } else {
-              console.log("Failed to update record");
+              const resp = {
+                success: false,
+                errorMessage: "Failed to update record",
+                statuscode: 500,
+              };
+              thunkAPI.dispatch(stopLoading());
+              resolve(resp);
             }
             thunkAPI.dispatch(stopLoading());
             return accountData;
           },
           (_, error) => {
-            console.log("ERROR", error);
+            const resp = {
+              success: false,
+              errorMessage: error,
+              statuscode: 500,
+            };
             thunkAPI.dispatch(stopLoading());
+            reject(resp);
           }
         );
       });
     } catch (error) {
+      const resp = {
+        success: false,
+        errorMessage: error.message,
+        statuscode: 500,
+      };
       thunkAPI.dispatch(stopLoading());
-      thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(resp);
     }
   }
 );
@@ -195,21 +206,42 @@ export const deleteAccount = createAsyncThunk(
           [accountId],
           (_, results) => {
             if (results.rowsAffected > 0) {
-              console.log("Record deleted successfully");
+              const resp = {
+                success: true,
+                message: "Record deleted successfully",
+                statuscode: 200,
+              };
+              thunkAPI.dispatch(stopLoading());
+              resolve(resp);
             } else {
-              console.log("Failed to delete record");
+              const resp = {
+                success: false,
+                errorMessage: "Failed to deleted record",
+                statuscode: 500,
+              };
+              thunkAPI.dispatch(stopLoading());
+              resolve(resp);
             }
-            thunkAPI.dispatch(stopLoading());
           },
           (_, error) => {
-            console.log("ERROR", error);
+            const resp = {
+              success: false,
+              errorMessage: error,
+              statuscode: 500,
+            };
             thunkAPI.dispatch(stopLoading());
+            reject(resp);
           }
         );
       });
     } catch (error) {
+      const resp = {
+        success: false,
+        errorMessage: error.message,
+        statuscode: 500,
+      };
       thunkAPI.dispatch(stopLoading());
-      thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(resp);
     }
   }
 );
