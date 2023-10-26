@@ -1,23 +1,24 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   FlatList,
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllAccounts, deleteAccount } from "../redux/slices/accountSlice";
+import AccountMenuOptions from "../components/AccountMenuOptions";
+import { deleteAccount, getAllAccounts } from "../redux/slices/accountSlice";
 import { HEADER_TITLE, SLICE_STATUS } from "../shared/Constants";
 import AddAccountModel from "../shared/components/AddAccountModel";
+import Alert from "../shared/components/Alert";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
 import Header from "../shared/components/Header";
 import ProgressBarNPM from "../shared/components/ProgressBarNPM";
-import AccountMenuOptions from "../components/AccountMenuOptions";
 
 const AccountsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -47,15 +48,27 @@ const AccountsScreen = ({ navigation }) => {
     }, [modalVisible, dispatch])
   );
 
+  const deleteRecord = (response) => {
+    if (response?.payload?.success) {
+      Alert(response?.payload?.message);
+    } else {
+      Alert(response?.payload?.errorMessage);
+    }
+  };
+
   useFocusEffect(
-    React.useCallback(() => {
-      if (isDelete) {
-        dispatch(deleteAccount(selectedAccount.id));
-        setIsDelete(false);
-        setSelectedAccount({});
-        dispatch(getAllAccounts());
-      }
-    }, [isDelete])
+    useCallback(() => {
+      const handleDelete = async () => {
+        if (isDelete) {
+          const resp = await dispatch(deleteAccount(selectedAccount.id));
+          setIsDelete(false);
+          setSelectedAccount({});
+          deleteRecord(resp);
+          dispatch(getAllAccounts());
+        }
+      };
+      handleDelete();
+    }, [isDelete, selectedAccount.id])
   );
 
   useFocusEffect(

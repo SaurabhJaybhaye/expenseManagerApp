@@ -116,133 +116,135 @@ export const getAllAccounts = createAsyncThunk(
 
 export const updateAccount = createAsyncThunk(
   "accounts/updateAccount",
-  async (accountData, thunkAPI) => {
-    thunkAPI.dispatch(startLoading());
-    const db = SQLite.openDatabase(DB_NAME);
-    try {
-      thunkAPI.dispatch(startLoading());
-      const {
-        id,
-        accountName,
-        description,
-        icon,
-        type,
-        currency,
-        balance,
-        limit,
-        positiveOpening,
-        showAccount,
-      } = accountData;
-      db.transaction((tx) => {
-        tx.executeSql(
-          `UPDATE accounts 
-           SET accountName = ?, description = ?, icon = ?, currency = ?, balance = ?, limits = ?, types = ?, positiveOpening = ?, showAccount = ?
-           WHERE id = ?`,
-          [
-            accountName,
-            description,
-            icon,
-            currency,
-            parseFloat(balance),
-            parseFloat(limit),
-            type,
-            positiveOpening,
-            showAccount,
-            id,
-          ],
-          (_, results) => {
-            if (results.rowsAffected > 0) {
-              const resp = {
-                success: true,
-                message: "Record updated successfully",
-                statuscode: 200,
-              };
-              thunkAPI.dispatch(stopLoading());
-              resolve(resp);
-            } else {
+  (accountData, thunkAPI) => {
+    return new Promise((resolve, reject) => {
+      try {
+        thunkAPI.dispatch(startLoading());
+        const db = SQLite.openDatabase(DB_NAME);
+        const {
+          id,
+          accountName,
+          description,
+          icon,
+          type,
+          currency,
+          balance,
+          limit,
+          positiveOpening,
+          showAccount,
+        } = accountData;
+
+        db.transaction((tx) => {
+          tx.executeSql(
+            `UPDATE accounts 
+             SET accountName = ?, description = ?, icon = ?, currency = ?, balance = ?, limits = ?, types = ?, positiveOpening = ?, showAccount = ?
+             WHERE id = ?`,
+            [
+              accountName,
+              description,
+              icon,
+              currency,
+              parseFloat(balance),
+              parseFloat(limit),
+              type,
+              positiveOpening,
+              showAccount,
+              id,
+            ],
+            (_, results) => {
+              if (results.rowsAffected > 0) {
+                const resp = {
+                  success: true,
+                  message: "Record updated successfully",
+                  statuscode: 200,
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              } else {
+                const resp = {
+                  success: false,
+                  errorMessage: "Failed to update record",
+                  statuscode: 500,
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              }
+            },
+            (_, error) => {
               const resp = {
                 success: false,
-                errorMessage: "Failed to update record",
+                errorMessage: error,
                 statuscode: 500,
               };
               thunkAPI.dispatch(stopLoading());
-              resolve(resp);
+              reject(resp);
             }
-            thunkAPI.dispatch(stopLoading());
-            return accountData;
-          },
-          (_, error) => {
-            const resp = {
-              success: false,
-              errorMessage: error,
-              statuscode: 500,
-            };
-            thunkAPI.dispatch(stopLoading());
-            reject(resp);
-          }
-        );
-      });
-    } catch (error) {
-      const resp = {
-        success: false,
-        errorMessage: error.message,
-        statuscode: 500,
-      };
-      thunkAPI.dispatch(stopLoading());
-      return thunkAPI.rejectWithValue(resp);
-    }
+          );
+        });
+      } catch (error) {
+        const resp = {
+          success: false,
+          errorMessage: error.message,
+          statuscode: 500,
+        };
+        thunkAPI.dispatch(stopLoading());
+        reject(resp);
+      }
+    });
   }
 );
 
 export const deleteAccount = createAsyncThunk(
   "accounts/deleteAccount",
-  async (accountId, thunkAPI) => {
-    thunkAPI.dispatch(startLoading());
-    const db = SQLite.openDatabase(DB_NAME);
-    try {
-      db.transaction((tx) => {
-        tx.executeSql(
-          `DELETE FROM accounts WHERE id = ?`,
-          [accountId],
-          (_, results) => {
-            if (results.rowsAffected > 0) {
-              const resp = {
-                success: true,
-                message: "Record deleted successfully",
-                statuscode: 200,
-              };
-              thunkAPI.dispatch(stopLoading());
-              resolve(resp);
-            } else {
+  (accountId, thunkAPI) => {
+    return new Promise((resolve, reject) => {
+      thunkAPI.dispatch(startLoading());
+      const db = SQLite.openDatabase(DB_NAME);
+      try {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM accounts WHERE id = ?`,
+            [accountId],
+            (_, results) => {
+              if (results.rowsAffected > 0) {
+                const resp = {
+                  success: true,
+                  message: "Record deleted successfully",
+                  statuscode: 200,
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              } else {
+                const resp = {
+                  success: false,
+                  errorMessage: "Failed to delete record",
+                  statuscode: 500,
+                };
+                thunkAPI.dispatch(stopLoading());
+                resolve(resp);
+              }
+            },
+            (_, error) => {
               const resp = {
                 success: false,
-                errorMessage: "Failed to deleted record",
+                errorMessage: error,
                 statuscode: 500,
               };
               thunkAPI.dispatch(stopLoading());
-              resolve(resp);
+              reject(resp);
             }
-          },
-          (_, error) => {
-            const resp = {
-              success: false,
-              errorMessage: error,
-              statuscode: 500,
-            };
-            thunkAPI.dispatch(stopLoading());
-            reject(resp);
-          }
-        );
-      });
-    } catch (error) {
-      const resp = {
-        success: false,
-        errorMessage: error.message,
-        statuscode: 500,
-      };
-      thunkAPI.dispatch(stopLoading());
-      return thunkAPI.rejectWithValue(resp);
-    }
+          );
+        });
+      } catch (error) {
+        const resp = {
+          success: false,
+          errorMessage: error.message,
+          statuscode: 500,
+        };
+        thunkAPI.dispatch(stopLoading());
+        reject(resp);
+      }
+    });
   }
 );
 

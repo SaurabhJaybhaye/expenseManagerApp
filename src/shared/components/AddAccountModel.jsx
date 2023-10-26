@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  ToastAndroid,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import SelectDropdown from "react-native-select-dropdown";
@@ -19,7 +20,7 @@ import { addAccountSchema } from "../schema/addAccountSchema";
 import { globalTextStyles } from "./GlobalStyles";
 import IconSelectModel from "./IconSelectModel";
 import { useFormik } from "formik";
-
+import Alert from "../components/Alert";
 const AddAccountModel = ({
   modalVisible,
   setModalVisible,
@@ -52,6 +53,11 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
+    if (response?.payload?.success) {
+      Alert(response?.payload?.message);
+    } else {
+      Alert(response?.payload?.errorMessage);
+    }
     handleClose();
   };
 
@@ -70,7 +76,11 @@ const AddAccountModel = ({
         showAccount: values.showAccount === true ? 1 : 0,
       })
     );
-
+    if (response?.payload?.success) {
+      Alert(response?.payload?.message);
+    } else {
+      Alert(response?.payload?.errorMessage);
+    }
     handleClose();
   };
 
