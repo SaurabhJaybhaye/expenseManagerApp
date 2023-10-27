@@ -4,14 +4,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const loaderSlice = createSlice({
   name: "loader",
   initialState: {
-    isLoading: false,
+    loadingCount: 0, // Initialize loadingCount to 0
   },
   reducers: {
     startLoading: (state) => {
-      state.isLoading = true;
+      state.loadingCount += 1; // Increment loadingCount
     },
     stopLoading: (state) => {
-      state.isLoading = false;
+      state.loadingCount -= 1; // Decrement loadingCount
     },
   },
 });

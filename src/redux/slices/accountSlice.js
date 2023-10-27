@@ -1,7 +1,7 @@
 // loaderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as SQLite from "expo-sqlite";
-import { SLICE_STATUS, DB_NAME } from "../../shared/Constants";
+import { SLICE_STATUS, DB_NAME, MESSAGES } from "../../shared/Constants";
 import { startLoading, stopLoading } from "./loaderSlice";
 
 // Create an async thunk for creating accounts
@@ -44,7 +44,7 @@ export const addAccount = createAsyncThunk(
               if (results.rowsAffected > 0) {
                 const resp = {
                   success: true,
-                  message: "Record inserted successfully",
+                  message: MESSAGES.inserted,
                   statuscode: 200,
                 };
                 thunkAPI.dispatch(stopLoading());
@@ -52,7 +52,7 @@ export const addAccount = createAsyncThunk(
               } else {
                 const resp = {
                   success: false,
-                  errorMessage: "Failed to insert record",
+                  errorMessage: MESSAGES.failedToInsert,
                   statuscode: 500,
                 };
                 thunkAPI.dispatch(stopLoading());
@@ -155,7 +155,7 @@ export const updateAccount = createAsyncThunk(
               if (results.rowsAffected > 0) {
                 const resp = {
                   success: true,
-                  message: "Record updated successfully",
+                  message: MESSAGES.updated,
                   statuscode: 200,
                 };
                 thunkAPI.dispatch(stopLoading());
@@ -163,7 +163,7 @@ export const updateAccount = createAsyncThunk(
               } else {
                 const resp = {
                   success: false,
-                  errorMessage: "Failed to update record",
+                  errorMessage: MESSAGES.failedToUpdate,
                   statuscode: 500,
                 };
                 thunkAPI.dispatch(stopLoading());
@@ -209,7 +209,7 @@ export const deleteAccount = createAsyncThunk(
               if (results.rowsAffected > 0) {
                 const resp = {
                   success: true,
-                  message: "Record deleted successfully",
+                  message: MESSAGES.deleted,
                   statuscode: 200,
                 };
                 thunkAPI.dispatch(stopLoading());
@@ -217,7 +217,7 @@ export const deleteAccount = createAsyncThunk(
               } else {
                 const resp = {
                   success: false,
-                  errorMessage: "Failed to delete record",
+                  errorMessage: MESSAGES.failedToDelete,
                   statuscode: 500,
                 };
                 thunkAPI.dispatch(stopLoading());

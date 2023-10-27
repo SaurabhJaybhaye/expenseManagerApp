@@ -22,14 +22,20 @@ import DropdownModalComponent from "../shared/components/DropdownModalComponent 
 import { globalTextStyles } from "../shared/components/GlobalStyles";
 import Header from "../shared/components/Header";
 import ActionButtons from "./ActionButtons";
-
 import MyPieChart from "../shared/components/MyPieChart";
-const HomeScreen = () => {
-  const dispatch = useDispatch();
 
+const HomeScreen = () => {
+  /**
+   * constants
+   */
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const status = useSelector((state) => state.accounts.status);
   const accounts = useSelector((state) => state.accounts.accounts);
+
+  /**
+   * component states
+   */
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState({
     label: "",
@@ -37,6 +43,9 @@ const HomeScreen = () => {
     icon: "",
   });
 
+  /**
+   * useEffect
+   */
   useEffect(() => {
     if (status === SLICE_STATUS.SUCCEEDED && accounts?.length > 0) {
       setSelectedAccount({
@@ -47,182 +56,183 @@ const HomeScreen = () => {
     }
   }, [status, accounts]);
 
+  /**
+   * useFocusEffect
+   */
   useFocusEffect(
     React.useCallback(() => {
       dispatch(getAllAccounts());
     }, [dispatch])
   );
 
-  const dropDownIcon = (
-    <Icon.Button
-      name="caretdown"
-      backgroundColor={"#fff"}
-      size={15}
-      color={"#000"}
-      onPress={() => {
-        setModalVisible(true);
-      }}
-    ></Icon.Button>
-  );
-
-  const data =
+  const accountOptions =
     status === SLICE_STATUS.SUCCEEDED &&
     accounts?.map((item) =>
       DROPDOWN_OPTIONS(item.accountName, item.accountName, item.icon)
     );
+
   // functions
+
+  /**
+   * setting account object
+   * @param {object} obj
+   */
   const handleDropDown = (obj) => {
     setSelectedAccount(obj);
     setModalVisible(false);
   };
 
-  if (status === SLICE_STATUS.loading) {
-    return <Text style={styles.loading}>Loading....</Text>;
-  } else if (status === SLICE_STATUS.SUCCEEDED) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Header
-          leftIcon={require("../shared/assets/icons/app.png")}
-          title={HEADER_TITLE.HOME}
-          onClickLeftIcon={() => {
-            navigation.openDrawer();
-          }}
-        />
+  /**
+   * Returning component
+   */
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <Header
+        leftIcon={require("../shared/assets/icons/app.png")}
+        title={HEADER_TITLE.HOME}
+        onClickLeftIcon={() => {
+          navigation.openDrawer();
+        }}
+      />
 
-        <View style={[styles.dropdown, styles.shadowBoarder]}>
-          <View style={[styles.dropdownText, styles.dropdownImage]}>
-            <Image source={Number(selectedAccount.icon)} style={styles.icons} />
-          </View>
-          <View style={[styles.dropdownText, styles.title]}>
-            <Text style={globalTextStyles.commonText}>
-              {selectedAccount.label}
-            </Text>
-          </View>
-          <View style={[styles.dropdownText, styles.dropdownIcon]}>
-            <Icon.Button
-              name="caretdown"
-              backgroundColor={"#fff"}
-              size={15}
-              color={"#000"}
-              onPress={() => {
-                setModalVisible(true);
-              }}
-            ></Icon.Button>
-          </View>
+      {/* Account Dropdown */}
+      <View style={[styles.dropdown, styles.shadowBoarder]}>
+        <View style={[styles.dropdownText, styles.dropdownImage]}>
+          <Image source={Number(selectedAccount.icon)} style={styles.icons} />
         </View>
+        <View style={[styles.dropdownText, styles.title]}>
+          <Text style={globalTextStyles.commonText}>
+            {selectedAccount.label}
+          </Text>
+        </View>
+        <View style={[styles.dropdownText, styles.dropdownIcon]}>
+          <Icon.Button
+            name="caretdown"
+            backgroundColor={"#fff"}
+            size={15}
+            color={"#000"}
+            onPress={() => {
+              setModalVisible(true);
+            }}
+          ></Icon.Button>
+        </View>
+      </View>
 
-        <DropdownModalComponent
-          selectedAccount={selectedAccount}
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          data={data}
-          handleDropDown={handleDropDown}
-        />
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.content}>
-            <View style={styles.actions}>
-              <ActionButtons navigation={navigation} />
-            </View>
+      <DropdownModalComponent
+        selectedAccount={selectedAccount}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        data={accountOptions}
+        handleDropDown={handleDropDown}
+      />
 
-            <TouchableOpacity
-              style={[styles.shadowBoarder, styles.balance]}
-              onPress={() => navigation.navigate(PATHS.REPORT_BY_YEAR)}
-            >
-              <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
-                Monthly balance + previous balance
-              </Text>
-              <Text style={styles.date}>September, 2023</Text>
-              <View style={styles.details}>
-                <View style={[styles.detailHead]}>
-                  <Text
-                    style={[styles.detailHeading, globalTextStyles.commonText]}
-                  >
-                    Income
-                  </Text>
-                  <Text
-                    style={[styles.detailHeading, globalTextStyles.commonText]}
-                  >
-                    Previous Balance
-                  </Text>
-                  <Text
-                    style={[styles.detailHeading, globalTextStyles.commonText]}
-                  >
-                    Expense
-                  </Text>
-                  <Text
-                    style={[styles.detailHeading, globalTextStyles.commonText]}
-                  ></Text>
-                  <Text
-                    style={[styles.detailHeading, globalTextStyles.commonText]}
-                  >
-                    Current Balance
-                  </Text>
-                </View>
-                <View style={[styles.detailValues]}>
-                  <Text style={[globalTextStyles.commonText]}>0.00+</Text>
-                  <Text style={[globalTextStyles.commonText]}>0.00+</Text>
-                  <Text style={[globalTextStyles.commonText]}>0.00 -</Text>
-                  <Text style={[globalTextStyles.commonText]}></Text>
-                  <Text style={[globalTextStyles.commonText]}>0.00=</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.summary, styles.shadowBoarder, styles.balance]}
-              onPress={() => navigation.navigate(PATHS.REPORT_BY_CATEGORY)}
-            >
-              <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
-                Monthly summary by category
-              </Text>
-              <Text style={styles.date}>September, 2023</Text>
-              <MyPieChart />
-            </TouchableOpacity>
-
-            <View
-              style={[styles.tenRecords, styles.shadowBoarder, styles.balance]}
-            >
-              <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
-                Last five records
-              </Text>
-              {/* 1st record */}
-              <View style={styles.recordView}>
-                <View style={styles.recordIcon}>
-                  <Icon name="pay-circle-o1" size={20} color={"#000"} />
-                </View>
-                <View style={styles.record}>
-                  <Text style={globalTextStyles.commonText}> Food</Text>
-                  <Text style={globalTextStyles.smallText}> Chinese </Text>
-                </View>
-                <View style={styles.recordValue}>
-                  <Text style={[globalTextStyles.commonText]}>74.20 -</Text>
-                </View>
-              </View>
-              {/* 2nd record */}
-              <View style={styles.recordView}>
-                <View style={styles.recordIcon}>
-                  <Icon name="pay-circle-o1" size={20} color={"#000"} />
-                </View>
-                <View style={styles.record}>
-                  <Text style={globalTextStyles.commonText}> Food</Text>
-                  <Text style={globalTextStyles.smallText}> Chinese </Text>
-                </View>
-                <View style={styles.recordValue}>
-                  <Text style={[globalTextStyles.commonText]}>74.20 -</Text>
-                </View>
-              </View>
-            </View>
-            {/* close */}
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Action buttons */}
+        <View style={styles.content}>
+          <View style={styles.actions}>
+            <ActionButtons navigation={navigation} />
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  } else {
-    return <Text>Got Error....</Text>;
-  }
+
+          {/* Basic Details of current month */}
+          <TouchableOpacity
+            style={[styles.shadowBoarder, styles.balance]}
+            onPress={() => navigation.navigate(PATHS.REPORT_BY_YEAR)}
+          >
+            <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
+              Monthly balance + previous balance
+            </Text>
+            <Text style={styles.date}>September, 2023</Text>
+            <View style={styles.details}>
+              <View style={[styles.detailHead]}>
+                <Text
+                  style={[styles.detailHeading, globalTextStyles.commonText]}
+                >
+                  Income
+                </Text>
+                <Text
+                  style={[styles.detailHeading, globalTextStyles.commonText]}
+                >
+                  Previous Balance
+                </Text>
+                <Text
+                  style={[styles.detailHeading, globalTextStyles.commonText]}
+                >
+                  Expense
+                </Text>
+                <Text
+                  style={[styles.detailHeading, globalTextStyles.commonText]}
+                ></Text>
+                <Text
+                  style={[styles.detailHeading, globalTextStyles.commonText]}
+                >
+                  Current Balance
+                </Text>
+              </View>
+              <View style={[styles.detailValues]}>
+                <Text style={[globalTextStyles.commonText]}>0.00+</Text>
+                <Text style={[globalTextStyles.commonText]}>0.00+</Text>
+                <Text style={[globalTextStyles.commonText]}>0.00 -</Text>
+                <Text style={[globalTextStyles.commonText]}></Text>
+                <Text style={[globalTextStyles.commonText]}>0.00=</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* Summary of expenses on chart */}
+          <TouchableOpacity
+            style={[styles.summary, styles.shadowBoarder, styles.balance]}
+            onPress={() => navigation.navigate(PATHS.REPORT_BY_CATEGORY)}
+          >
+            <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
+              Monthly summary by category
+            </Text>
+            <Text style={styles.date}>September, 2023</Text>
+            <MyPieChart />
+          </TouchableOpacity>
+
+          {/* 10 Records View */}
+          <View
+            style={[styles.tenRecords, styles.shadowBoarder, styles.balance]}
+          >
+            <Text style={[styles.viewTitle, globalTextStyles.headingText]}>
+              Last five records
+            </Text>
+            {/* 1st record */}
+            <View style={styles.recordView}>
+              <View style={styles.recordIcon}>
+                <Icon name="pay-circle-o1" size={20} color={"#000"} />
+              </View>
+              <View style={styles.record}>
+                <Text style={globalTextStyles.commonText}> Food</Text>
+                <Text style={globalTextStyles.smallText}> Chinese </Text>
+              </View>
+              <View style={styles.recordValue}>
+                <Text style={[globalTextStyles.commonText]}>74.20 -</Text>
+              </View>
+            </View>
+            {/* 2nd record */}
+            <View style={styles.recordView}>
+              <View style={styles.recordIcon}>
+                <Icon name="pay-circle-o1" size={20} color={"#000"} />
+              </View>
+              <View style={styles.record}>
+                <Text style={globalTextStyles.commonText}> Food</Text>
+                <Text style={globalTextStyles.smallText}> Chinese </Text>
+              </View>
+              <View style={styles.recordValue}>
+                <Text style={[globalTextStyles.commonText]}>74.20 -</Text>
+              </View>
+            </View>
+          </View>
+          {/* close */}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 export default HomeScreen;
