@@ -1,11 +1,12 @@
 import React from "react";
 import {
-  View,
-  Modal,
   FlatList,
+  Image,
+  Modal,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { globalTextStyles } from "./GlobalStyles";
@@ -14,7 +15,6 @@ const DropdownModalComponent = ({
   selectedAccount,
   modalVisible,
   setModalVisible,
-  dropDownIcon,
   data,
   handleDropDown,
 }) => {
@@ -23,7 +23,9 @@ const DropdownModalComponent = ({
       onPress={() => handleDropDown({ label: title, value: value, icon: icon })}
       style={styles.modalView}
     >
-      <View style={styles.image}>{icon}</View>
+      <View style={styles.image}>
+        <Image source={Number(icon)} size={20} style={styles.icons} />
+      </View>
       <View style={styles.options}>
         <Text style={globalTextStyles.commonText}>{title}</Text>
       </View>
@@ -88,5 +90,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-end",
     marginRight: 15,
+  },
+  icons: {
+    height: 30,
+    width: 30,
   },
 });

@@ -1,59 +1,93 @@
-import React, { useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  StyleSheet,
-  Text,
+  Image,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import Header from "../shared/components/Header";
-import { HEADER_TITLE, PATHS } from "../shared/Constants";
-import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllAccounts } from "../redux/slices/accountSlice";
+import {
+  DROPDOWN_OPTIONS,
+  HEADER_TITLE,
+  PATHS,
+  SLICE_STATUS,
+} from "../shared/Constants";
 import DropdownModalComponent from "../shared/components/DropdownModalComponent "; // Import the component
-import ActionButtons from "./ActionButtons";
 import { globalTextStyles } from "../shared/components/GlobalStyles";
-
+import Header from "../shared/components/Header";
+import ActionButtons from "./ActionButtons";
 import MyPieChart from "../shared/components/MyPieChart";
+
 const HomeScreen = () => {
+  /**
+   * constants
+   */
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const status = useSelector((state) => state.accounts.status);
+  const accounts = useSelector((state) => state.accounts.accounts);
+
+  /**
+   * component states
+   */
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState({
-    label: "Bank 1",
-    value: "Bank_1",
-    icon: bank1,
+    label: "",
+    value: "",
+    icon: "",
   });
 
-  const dropDownIcon = (
-    <Icon.Button
-      name="caretdown"
-      backgroundColor={"#fff"}
-      size={15}
-      color={"#000"}
-      onPress={() => {
-        setModalVisible(true);
-      }}
-    ></Icon.Button>
-  );
-  const bank2 = <Icon name="home" size={20} color={"#000"} />;
-  const cash = <Icon name="wallet" size={20} color={"#000"} />;
-  const bank1 = <Icon name="pay-circle-o1" size={20} color={"#000"} />;
+  /**
+   * useEffect
+   */
+  useEffect(() => {
+    if (status === SLICE_STATUS.SUCCEEDED && accounts?.length > 0) {
+      setSelectedAccount({
+        label: accounts[0].accountName,
+        value: accounts[0].accountName,
+        icon: accounts[0].icon,
+      });
+    }
+  }, [status, accounts]);
 
-  const data = [
-    { label: "Bank 1", value: "Bank_1", icon: bank1 },
-    { label: "Bank 2", value: "Bank_2", icon: bank2 },
-    { label: "Cash", value: "Cash", icon: cash },
-  ];
+  /**
+   * useFocusEffect
+   */
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getAllAccounts());
+    }, [dispatch])
+  );
+
+  const accountOptions =
+    status === SLICE_STATUS.SUCCEEDED &&
+    accounts?.map((item) =>
+      DROPDOWN_OPTIONS(item.accountName, item.accountName, item.icon)
+    );
 
   // functions
+
+  /**
+   * setting account object
+   * @param {object} obj
+   */
   const handleDropDown = (obj) => {
     setSelectedAccount(obj);
     setModalVisible(false);
   };
 
+  /**
+   * Returning component
+   */
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <Header
         leftIcon={require("../shared/assets/icons/app.png")}
         title={HEADER_TITLE.HOME}
@@ -62,9 +96,10 @@ const HomeScreen = () => {
         }}
       />
 
+      {/* Account Dropdown */}
       <View style={[styles.dropdown, styles.shadowBoarder]}>
         <View style={[styles.dropdownText, styles.dropdownImage]}>
-          {selectedAccount.icon}
+          <Image source={Number(selectedAccount.icon)} style={styles.icons} />
         </View>
         <View style={[styles.dropdownText, styles.title]}>
           <Text style={globalTextStyles.commonText}>
@@ -88,19 +123,21 @@ const HomeScreen = () => {
         selectedAccount={selectedAccount}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        dropDownIcon={dropDownIcon}
-        data={data}
+        data={accountOptions}
         handleDropDown={handleDropDown}
       />
+
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
+        {/* Action buttons */}
         <View style={styles.content}>
           <View style={styles.actions}>
             <ActionButtons navigation={navigation} />
           </View>
 
+          {/* Basic Details of current month */}
           <TouchableOpacity
             style={[styles.shadowBoarder, styles.balance]}
             onPress={() => navigation.navigate(PATHS.REPORT_BY_YEAR)}
@@ -145,6 +182,7 @@ const HomeScreen = () => {
             </View>
           </TouchableOpacity>
 
+          {/* Summary of expenses on chart */}
           <TouchableOpacity
             style={[styles.summary, styles.shadowBoarder, styles.balance]}
             onPress={() => navigation.navigate(PATHS.REPORT_BY_CATEGORY)}
@@ -156,6 +194,7 @@ const HomeScreen = () => {
             <MyPieChart />
           </TouchableOpacity>
 
+          {/* 10 Records View */}
           <View
             style={[styles.tenRecords, styles.shadowBoarder, styles.balance]}
           >
@@ -199,6 +238,11 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -310,5 +354,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "flex-end",
     marginRight: 10,
+  },
+  icons: {
+    height: 30,
+    width: 30,
   },
 });
