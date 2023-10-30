@@ -25,7 +25,7 @@ const AccountsScreen = ({ navigation }) => {
   const status = useSelector((state) => state.accounts.status);
   const accounts = useSelector((state) => state.accounts.accounts);
   const [modalVisible, setModalVisible] = useState(false);
-  const [menuVissible, setMenuVissible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [edit, setEdit] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState({});
@@ -84,7 +84,7 @@ const AccountsScreen = ({ navigation }) => {
       <Header
         leftIcon={require("../shared/assets/icons/hamburger.png")}
         rightIcon={require("../shared/assets/icons/add1.png")}
-        title={HEADER_TITLE.Accounts}
+        title={HEADER_TITLE.ACCOUNT}
         onClickLeftIcon={() => {
           navigation.openDrawer();
         }}
@@ -103,8 +103,8 @@ const AccountsScreen = ({ navigation }) => {
       />
 
       <AccountMenuOptions
-        isVisible={menuVissible}
-        setVisible={setMenuVissible}
+        isVisible={menuVisible}
+        setVisible={setMenuVisible}
         setDelete={setIsDelete}
         setEdit={setEdit}
       />
@@ -118,7 +118,7 @@ const AccountsScreen = ({ navigation }) => {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    setSelectedAccount(item), setMenuVissible(true);
+                    setSelectedAccount(item), setMenuVisible(true);
                   }}
                   style={styles.content}
                 >

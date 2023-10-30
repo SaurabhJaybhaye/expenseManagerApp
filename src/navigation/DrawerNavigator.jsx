@@ -10,8 +10,9 @@ import CustomDrawer from "./CustomDrawer";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import FontAwesomeIcon5 from "react-native-vector-icons/FontAwesome5";
 import Feather from "react-native-vector-icons/Feather";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import SettingsScreen from "../screens/SettingsScreen";
+import Categories from "../screens/Categories";
 
 const Drawer = createDrawerNavigator();
 
@@ -70,11 +71,11 @@ const DrawerNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name={PATHS.SETTINGS}
-        component={SettingsScreen}
+        name={PATHS.CATEGORY}
+        component={Categories}
         options={{
           drawerIcon: ({ color }) => (
-            <Feather name="settings" size={20} color={color} />
+            <MaterialIcons name="category" size={20} color={color} />
           ),
         }}
       />

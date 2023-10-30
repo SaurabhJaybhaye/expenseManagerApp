@@ -6,12 +6,13 @@ export const PATHS = {
   FORMS: "Forms",
   REPORT_BY_YEAR: "Report by year",
   REPORT_BY_CATEGORY: "Report by category",
-  SETTINGS: "Settings",
+  CATEGORY: "Category",
 };
 
 export const HEADER_TITLE = {
   HOME: "Home",
-  Accounts: "Accounts",
+  ACCOUNT: "Accounts",
+  CATEGORY: "Category",
 };
 
 export const ACCOUNT_TYPES = ["Income", "Expense"];
